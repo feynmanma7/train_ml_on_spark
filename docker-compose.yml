@@ -19,13 +19,14 @@ services:
     depends_on:
       - spark-master
     environment:
-      - SPARK_WORKER_MEMORY=1g
+      - SPARK_WORKER_MEMORY=2g
       - SPARK_WORKER_CORES=1
     command: >
       /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker
       spark://spark-master:7077
     volumes:
       - spark-data:/opt/spark/work-dir
+      - /Users/mac/data/notebook:/home/feynman/work/data
 
   spark-worker-2:
     image: spark-xgb:latest
@@ -33,13 +34,14 @@ services:
     depends_on:
       - spark-master
     environment:
-      - SPARK_WORKER_MEMORY=1g
+      - SPARK_WORKER_MEMORY=2g
       - SPARK_WORKER_CORES=1
     command: >
       /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker
       spark://spark-master:7077
     volumes:
       - spark-data:/opt/spark/work-dir
+      - /Users/mac/data/notebook:/home/feynman/work/data
 
   jupyter:
     image: spark-xgb:latest
@@ -49,9 +51,10 @@ services:
     environment:
       - PYSPARK_SUBMIT_ARGS=--master spark://spark-master:7077 pyspark-shell
     command: >
-      jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --ServerApp.default_url=/lab --NotebookApp.token='' --NotebookApp.password='' --notebook-dir=/home/feynman/work
+      jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --ServerApp.default_url=/lab --ServerApp.iopub_data_rate_limit=1e10 --NotebookApp.token='' --NotebookApp.password='' --notebook-dir=/home/feynman/work
     volumes:
       - ./notebooks:/home/feynman/work
+      - /Users/mac/data/notebook:/home/feynman/work/data
       - spark-data:/opt/spark/work-dir
     depends_on:
       - spark-master
