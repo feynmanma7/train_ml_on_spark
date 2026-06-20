@@ -1,0 +1,60 @@
+# docker-compose.yml - Spark cluster with 1 master and 3 workers
+version: "3.8"
+
+services:
+  spark-master:
+    image: spark-xgb:latest
+    container_name: spark-master
+    ports:
+      - "8080:8080"   # Spark Master web UI
+      - "7077:7077"   # Spark Master port
+      - "4040:4040"   # Spark application UI
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+    volumes:
+      - spark-data:/opt/spark/work-dir
+
+  spark-worker-1:
+    image: spark-xgb:latest
+    container_name: spark-worker-1
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_WORKER_MEMORY=1g
+      - SPARK_WORKER_CORES=1
+    command: >
+      /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker
+      spark://spark-master:7077
+    volumes:
+      - spark-data:/opt/spark/work-dir
+
+  spark-worker-2:
+    image: spark-xgb:latest
+    container_name: spark-worker-2
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_WORKER_MEMORY=1g
+      - SPARK_WORKER_CORES=1
+    command: >
+      /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker
+      spark://spark-master:7077
+    volumes:
+      - spark-data:/opt/spark/work-dir
+
+  jupyter:
+    image: spark-xgb:latest
+    container_name: spark-jupyter
+    ports:
+      - "8888:8888"
+    environment:
+      - PYSPARK_SUBMIT_ARGS=--master spark://spark-master:7077 pyspark-shell
+    command: >
+      jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --ServerApp.default_url=/lab --NotebookApp.token='' --NotebookApp.password='' --notebook-dir=/home/feynman/work
+    volumes:
+      - ./notebooks:/home/feynman/work
+      - spark-data:/opt/spark/work-dir
+    depends_on:
+      - spark-master
+
+volumes:
+  spark-data:
