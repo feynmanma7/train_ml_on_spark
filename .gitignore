@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 .DS_Store
+notebooks/.Trash-0/
+notebooks/.virtual_documents/
+notebooks/data/
