@@ -5,3 +5,5 @@ __pycache__/
 notebooks/.Trash-0/
 notebooks/.virtual_documents/
 notebooks/data/
+notebooks/run_bank_marketing.py
+notebooks/run_pipeline.py
