@@ -2,8 +2,14 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 .DS_Store
+.vscode/
 notebooks/.Trash-0/
 notebooks/.virtual_documents/
 notebooks/data/
 notebooks/run_bank_marketing.py
 notebooks/run_pipeline.py
+
+# torch_lite build artifacts
+dl_library/build/
+dl_library/torch_lite/_torch_lite_core*.so
+
